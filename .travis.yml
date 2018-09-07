@@ -1,0 +1,35 @@
+language: r
+r:
+  - release
+os:
+  - linux
+  - osx
+branches:
+  only:
+    master
+
+r_packages:
+  - DiceKriging
+  - randtoolbox
+  - rgenoud
+  - pbivnorm
+  - rgenoud
+  - foreach
+  - doParallel
+  - testthat
+  - covr
+cache: packages
+    
+addons:
+  apt:
+    packages:
+      - libssh2-1-dev
+      
+before_install:
+  - echo "$TRAVIS_OS_NAME"
+  - echo "$TRAVIS_R_VERSION_STRING"
+  - echo $PKG_TARBALL
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo chown -R $(whoami) /usr/local ; brew install libgit2; fi
+  
+after_success:
+  - if [[ "$TRAVIS_R_VERSION_STRING" == "release" && ("$TRAVIS_OS_NAME" == "linux") ]]; then Rscript -e 'covr::codecov()'; fi
