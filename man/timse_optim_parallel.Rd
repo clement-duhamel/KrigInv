@@ -1,5 +1,5 @@
 \name{timse_optim_parallel}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{timse_optim_parallel}
 
 \title{ Parallel targeted IMSE criterion }
@@ -24,7 +24,7 @@ batchsize, current.timse)
 	\item{intpoints.oldsd}{Vector of size p corresponding to the kriging standard deviation at the integration points before adding \code{x} to the design of experiments.}
 	\item{precalc.data}{List containing useful data to compute quickly the updated kriging variance. This list can be generated using the \code{\link{precomputeUpdateData}} function.}
  	\item{model}{Object of class \code{\link[DiceKriging]{km}} (Kriging model).}
-	\item{T}{Target value (scalar).}
+	\item{T}{Array containing one or several thresholds.}
 	\item{new.noise.var}{Optional scalar value of the noise variance of the new observations.}
 	\item{weight}{
 Vector of weight function (length must be equal to the number of lines of the matrix integration.points). 
@@ -34,19 +34,19 @@ If nothing is set, the imse criterion is used instead of timse. It corresponds t
   	\item{current.timse}{Current value of the timse criterion (before adding new observations)}
 }
 
-\value{targeted imse value}
+\value{Targeted imse value}
 \references{
-Picheny, V., Ginsbourger, D., Roustant, O., Haftka, R.T., Adaptive designs of experiments for accurate approximation of a target region, J. Mech. Des. - July 2010 - Volume 132, Issue 7, \url{http://dx.doi.org/10.1115/1.4001873}
+Picheny V., Ginsbourger D., Roustant O., Haftka R.T., (2010) \emph{Adaptive designs of experiments for accurate approximation of a target region}, J. Mech. Des. vol. 132(7)
 
-Picheny V., Improving accuracy and compensating for uncertainty in surrogate modeling, Ph.D. thesis, University of Florida and Ecole Nationale Superieure des Mines de Saint-Etienne
+Picheny V. (2009) \emph{Improving accuracy and compensating for uncertainty in surrogate modeling}, Ph.D. thesis, University of Florida and Ecole Nationale Superieure des Mines de Saint-Etienne
 
-Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2011), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set} ,\url{http://hal.archives-ouvertes.fr/hal-00641108/}
+Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2014), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set}, Technometrics, vol. 56(4), pp 455-465
 }
 
 \author{
-Victor Picheny (CERFACS, Toulouse, France) 
+Victor Picheny (INRA, Toulouse, France)
 
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 }
 
 \seealso{\code{\link{EGIparallel}}, \code{\link{max_timse_parallel}}}
@@ -54,12 +54,12 @@ Clement Chevalier (IMSV, Switzerland, and IRSN, France)
 \examples{
 #timse_optim_parallel
 
-set.seed(8)
-N <- 9 #number of observations
-T <- 80 #threshold
+set.seed(9)
+N <- 20 #number of observations
+T <- c(80,100) #thresholds
 testfun <- branin
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 
@@ -85,9 +85,12 @@ precalc.data <- precomputeUpdateData(model,integration.points)
 
 #we also need to compute weights. Otherwise the (more simple) 
 #imse criterion will be evaluated
-weight <- 1/sqrt(2*pi*intpoints.oldsd^2) * 
-exp(-0.5*((intpoints.oldmean-T)/sqrt(intpoints.oldsd^2))^2)
-weight[is.nan(weight)] <- 0
+weight0 <- 1/sqrt( 2*pi*(intpoints.oldsd^2) )
+weight <- 0
+for(i in 1:length(T)){
+  Ti <- T[i]
+  weight <- weight + weight0 * exp(-0.5*((intpoints.oldmean-Ti)/sqrt(intpoints.oldsd^2))^2)
+}
 
 batchsize <- 4
 x <- c(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8)

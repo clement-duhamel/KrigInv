@@ -1,22 +1,21 @@
 \name{print_uncertainty_nd}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{print_uncertainty_nd}
 
 \title{
-Print a measure of uncertainty for functions with dimension d strictly higher than 2.
+Print a measure of uncertainty for functions with dimension d strictly larger than 2.
 }
 \description{
 This function draws projections on various plans of a given measure of uncertainty. 
-Possible measures are \code{"pn"} (probability of excursion) and measures specific to a sampling criterion: \code{"sur"}, \code{"timse"} and \code{"imse"}.
-This function can be used to print relevant outputs after having used the function \code{\link{EGI}}.
+The function can be used to print relevant outputs after having used the function \code{\link{EGI}} or \code{\link{EGIparallel}}.
 }
 
 \usage{
 print_uncertainty_nd(model,T,type="pn",lower=NULL,upper=NULL,
-  		resolution=20, nintegpoints=400,main="",
-			cex.main=1,cex.lab=1,cex.contourlab=1,cex.axis=1,
+  		resolution=20, nintegpoints=400,
+  		cex.lab=1,cex.contourlab=1,cex.axis=1,
 			nlevels=10,levels=NULL,
-			xdecal=3,ydecal=3, option="mean")
+			xdecal=3,ydecal=3, option="mean", pairs=NULL,...)
 }
 
 \arguments{
@@ -24,12 +23,13 @@ print_uncertainty_nd(model,T,type="pn",lower=NULL,upper=NULL,
 Kriging model of \code{\link[DiceKriging]{km}} class.
 }
   \item{T}{
-Target value (a real number). The sampling algorithm and the underlying kriging model aim to find the points below (resp. over) T.
+Array containing one or several thresholds.
 }
   \item{type}{
 Type of uncertainty that the user wants to print. 
 	Possible values are \code{"pn"} (probability of excursion), or 
-	\code{"sur"}, \code{"imse"}, \code{"timse"} if we print a measure of uncertainty corresponding to one criterion.
+	\code{"sur"}, \code{"imse"}, \code{"timse"} if we print a measure of uncertainty corresponding to one criterion. 
+	The \code{"vorob"} option is not available due to the difficulty of computing a Vorob'ev threshold.
 }
   \item{lower}{
 Vector containing the lower bounds of the input domain. If nothing is set we use a vector of 0.
@@ -38,16 +38,11 @@ Vector containing the lower bounds of the input domain. If nothing is set we use
 Vector containing the upper bounds of the input domain. If nothing is set we use a vector of 1.
 }
   \item{resolution}{
-Number of points to discretize a plan included in the domain. For the moment, we cannot use values higher than 40.
+Number of points to discretize a plan included in the domain. For the moment, we cannot use values higher than 40 do to 
+computation time, except when the argument \code{"pairs"} is not set to its default value.
 }
   \item{nintegpoints}{
 to do
-}
-  \item{main}{
-Title of the graph.
-}
-  \item{cex.main}{
-Multiplicative factor for the size of the title.
 }
   \item{cex.lab}{
 Multiplicative factor for the size of titles of the axis.
@@ -73,37 +68,41 @@ Optional position shifting of the titles of the y axis.
   \item{option}{
 Optional argument (a string). The 3 possible values are \code{"mean"} (default), \code{"max"} and \code{"min"}.
 }
+  \item{pairs}{
+Optional argument. When set to code{NULL} (default) the function performs the projections on plans spanned by each pair (i,j) of dimension. Otherwise, the argument is an array of size 2 corresponding to the dimensions spanning the (only) plan on which the projection is performed.
+}
+\item{...}{
+Additional arguments to the \code{image} function.
+}
 }
 
 \value{
-the integrated uncertainty
+The integrated uncertainty
 }
 
 \references{
-Bect J., Ginsbourger D., Li L., Picheny V., Vazquez E. (2010), \emph{Sequential design of computer experiments for the estimation of a probability of failure}, Statistics and Computing, pp.1-21, 2011, \url{http://arxiv.org/abs/1009.5177}
+Bect J., Ginsbourger D., Li L., Picheny V., Vazquez E. (2012), \emph{Sequential design of computer experiments for the estimation of a probability of failure}, Statistics and Computing vol. 22(3), pp 773-793
 }
 
 \author{ 
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 }
 
-\seealso{\code{\link{EGI}}}
+\seealso{\code{\link{print_uncertainty_1d}},\code{\link{print_uncertainty_2d}}}
 
 \examples{
 #print_uncertainty_nd
 
-set.seed(8)
-N <- 25 #number of observations
+set.seed(9)
+N <- 30 #number of observations
 T <- -1 #threshold
 testfun <- hartman3
 #The hartman3 function is defined over the domain [0,1]^3. 
 
-hartman3(runif(3))
-
 lower <- rep(0,times=3)
 upper <- rep(1,times=3)
 
-#a 9 points initial design (LHS in 3 dimensions)
+#a 30 points initial design
 design <- data.frame( matrix(runif(3*N),ncol=3) )
 response <- apply(design,1,testfun)
 

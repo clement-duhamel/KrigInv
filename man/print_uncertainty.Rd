@@ -1,14 +1,13 @@
 \name{print_uncertainty}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{print_uncertainty}
 
 \title{
 Prints a measure of uncertainty for a function of any dimension.
 }
 \description{
-This function prints in the whole input domain the value of a given measure of uncertainty. 
-Possible measures are \code{"pn"} (the probability of excursion) and measures specific to a sampling criterion: \code{"sur"}, \code{"timse"} and \code{"imse"}.
-This function can be used to print relevant outputs after having used the function \code{\link{EGI}}.
+This function prints the value of a given measure of uncertainty. 
+The function can be used to print relevant outputs after having used the function \code{\link{EGI}} or \code{\link{EGIparallel}}.
 }
 \usage{
 print_uncertainty(model, T, type = "pn", ...)
@@ -19,7 +18,7 @@ print_uncertainty(model, T, type = "pn", ...)
 Kriging model of \code{\link[DiceKriging]{km}} class.
 }
   \item{T}{
-Target value (scalar).
+Array containing one or several thresholds.
 }
   \item{type}{
 Type of uncertainty that the user wants to print. 
@@ -27,7 +26,7 @@ Type of uncertainty that the user wants to print.
 	\code{"sur"}, \code{"imse"}, \code{"timse"}, \code{"vorob"} if we print a measure of uncertainty corresponding to one criterion.
 }
   \item{\dots}{
-Other arguments of the function \code{print_uncertainty_1d}, \code{2d} or \code{nd}.
+Other arguments of the functions \code{print_uncertainty_1d}, \code{2d} or \code{nd}.
 }
 }
 
@@ -36,26 +35,26 @@ the integrated uncertainty
 }
 
 \references{
-Bect J., Ginsbourger D., Li L., Picheny V., Vazquez E. (2010), \emph{Sequential design of computer experiments for the estimation of a probability of failure}, Statistics and Computing, pp.1-21, 2011, \url{http://arxiv.org/abs/1009.5177}
+Bect J., Ginsbourger D., Li L., Picheny V., Vazquez E. (2012), \emph{Sequential design of computer experiments for the estimation of a probability of failure}, Statistics and Computing vol. 22(3), pp 773-793
 }
 
 \author{ 
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 }
 
-\seealso{\code{\link{EGI}}}
+\seealso{\code{\link{print_uncertainty_1d}},\code{\link{print_uncertainty_2d}},\code{\link{print_uncertainty_nd}}}
 
 \examples{
 #print_uncertainty
 
-set.seed(8)
-N <- 9 #number of observations
-T <- 80 #threshold
+set.seed(9)
+N <- 20 #number of observations
+T <- c(80,100) #threshold
 testfun <- branin
 lower <- c(0,0)
 upper <- c(1,1)
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 

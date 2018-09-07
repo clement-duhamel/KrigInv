@@ -1,9 +1,3 @@
-#' Compute the local 'Two Sided Expected Exceedance'' criterion:
-#' TSEE(x) = E[(Y(x)-T)+ | Y(Xn)=Yn ] * E[(T-Y(x))+ | Y(Xn)=Yn]
-#' @param x coordinates (possibly vector) in design space
-#' @param T target on Y
-#' @param model kriging model of class km
-#' @param type Kriging type
 tsee_optim <-
 function(x, model, T){
 	

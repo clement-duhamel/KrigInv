@@ -1,12 +1,13 @@
 \name{EGI}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{EGI}
 
 \title{
-Efficient Global Inversion: sequential inversion algorithm based on Kriging
+Efficient Global Inversion: sequential inversion algorithm based on Kriging. 
 }
 \description{
-Sequential sampling based on the optimization of a kriging-based criterion, with model update after each evaluation. Seven criteria are available for selecting experiments, three inexpensive (\code{"bichon"}, \code{"ranjan"}, and \code{"tmse"}) and four expensive ones that require numerical integration (\code{"imse"}, \code{"timse"}, \code{"sur"} and \code{"jn"}).
+Sequential sampling based on the optimization of a kriging-based criterion, with model update after each iteration. The criterias aim at identifying an excursion set or one/many level sets. At each iteration batchsize = 1 new locations are evaluated. 
+Different criteria are available for selecting experiments. The pointwise criteria are \code{"bichon"}, \code{"ranjan"}, \code{"tmse"}, \code{"tsee"}  and are fast to compute. In addition, integral criteria require numerical integration and can potentially deliver more than one new location per iteration. Available integral criteria are \code{"imse"}, \code{"timse"}, \code{"sur"}, \code{"jn"}, \code{"vorob"}. The use of the integral criteria is implemented in the \code{\link{EGIparallel}} function.
 }
 \usage{
 EGI(T, model, method = NULL, method.param = NULL,
@@ -16,13 +17,13 @@ optimcontrol = NULL, kmcontrol = NULL, integcontrol = NULL, ...)
 
 \arguments{
   \item{T}{
-Target value (a real number). The sampling algorithm and the underlying kriging model aim at finding the points for which the output is close to T.
+Array containing one or several thresholds. The criteria which can be used with multiple thresholds are \code{"tmse"}, \code{"timse"}, \code{"sur"}, \code{"jn"}.
 }
   \item{model}{
 A Kriging model of \code{\link[DiceKriging]{km}} class.
 }
   \item{method}{
-Criterion used for choosing observations. Available criteria are \code{"ranjan"} (default) , \code{"bichon"}, \code{"tmse"}, \code{"timse"}, \code{"imse"}, \code{"sur"} and \code{"jn"}.
+Criterion used for choosing observations. 
 }
   \item{method.param}{
 Optional tolerance value (scalar) for methods \code{"ranjan"}, \code{"bichon"}, \cr
@@ -86,35 +87,38 @@ The function used to build the integration points and weights (based on the opti
 \item{allvalues}{If an optimization on a discrete set of points is chosen, the value of the criterion at all these points, for the last iteration.}
 }
 \references{
-Chevalier C., Picheny V., Ginsbourger D. (2012), \emph{The KrigInv package: An efficient and user-friendly R implementation of Kriging-based inversion algorithms} ,\cr
-\url{http://hal.archives-ouvertes.fr/hal-00713537/}
+Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2014), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set}, Technometrics, vol. 56(4), pp 455-465
 
-Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2011), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set} ,\url{http://hal.archives-ouvertes.fr/hal-00641108/}
+Picheny V., Ginsbourger D., Roustant O., Haftka R.T., (2010) \emph{Adaptive designs of experiments for accurate approximation of a target region}, J. Mech. Des. vol. 132(7)
 
-Bect J., Ginsbourger D., Li L., Picheny V., Vazquez E. (2010), \emph{Sequential design of computer experiments for the estimation of a probability of failure}, Statistics and Computing, pp.1-21, 2011, \url{http://arxiv.org/abs/1009.5177}
+Chevalier C. (2013) \emph{Fast uncertainty reduction strategies relying on Gaussian process models} Ph.D Thesis, University of Bern
+
+Bichon B.J., Eldred M.S., Swiler L.P., Mahadevan S., McFarland J.M. (2008) \emph{Efficient global reliability analysis for nonlinear implicit performance functions}, AIAA Journal 46(10), pp 2459-2468
+
+Ranjan P., Bingham D., Michailidis G. (2008) \emph{Sequential experiment design for contour estimation from complex computer codes} Technometrics 50(4), pp 527-541
 }
 
 \author{
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 
-Victor Picheny (CERFACS, Toulouse, France) 
+Victor Picheny (INRA, Toulouse, France)
 
-David Ginsbourger (IMSV, University of Bern, Switzerland) 
+David Ginsbourger (IDIAP Martigny and University of Bern, Switzerland)
 }
 
-\seealso{\code{\link{max_sur}}, \code{\link{max_timse}}, \code{\link{max_infill_criterion}}}
+\seealso{\code{\link{EGIparallel}},\code{\link{max_infill_criterion}}}
 
 \examples{
 #EGI
 
-set.seed(8)
-N <- 9 #number of observations
+set.seed(9)
+N <- 20 #number of observations
 T <- 80 #threshold
 testfun <- branin
 lower <- c(0,0)
 upper <- c(1,1)
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 
@@ -152,8 +156,8 @@ type="pn",new.points=iter,col.points.end="red",cex.points=2)
 #same example with noisy initial observations and noisy new observations
 branin.noise <- function(x) return(branin(x)+rnorm(n=1,sd=30))
 
-set.seed(8)
-N <- 9;T <- 80
+set.seed(9)
+N <- 20;T <- 80
 testfun <- branin.noise
 lower <- c(0,0);upper <- c(1,1)
 

@@ -1,5 +1,5 @@
 \name{vorob_threshold}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{vorob_threshold}
 
 \title{ Calculation of the Vorob'ev threshold }
@@ -14,18 +14,18 @@ vorob_threshold(pn)
   	\item{pn}{Input vector of arbitrary size containing the excursion probabilities pn(x).}
 }
 \details{
-In this function, all the points x are supposed tobe equaly weighted.
+In this function, all the points x are supposed to be equaly weighted.
 }
 
 \value{a scalar: the Vorob'ev thresold}
 \references{
-Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2011), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set} ,\url{http://hal.archives-ouvertes.fr/hal-00641108/}
+Chevalier C., Ginsbouger D., Bect J., Molchanov I. (2013) \emph{Estimating and quantifying uncertainties on level sets using the Vorob'ev expectation and deviation with gaussian process models} mODa 10, Advances in Model-Oriented Design and Analysis, Contributions to Statistics, pp 35-43
 
-Bect J., Ginsbourger D., Li L., Picheny V., Vazquez E. (2010), \emph{Sequential design of computer experiments for the estimation of a probability of failure}, Statistics and Computing, pp.1-21, 2011, \url{http://arxiv.org/abs/1009.5177}
+Chevalier C. (2013) \emph{Fast uncertainty reduction strategies relying on Gaussian process models} Ph.D Thesis, University of Bern
 }
 
 \author{
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 }
 
 \seealso{\code{\link{max_vorob_parallel}}, \code{\link{vorob_optim_parallel}} }
@@ -33,12 +33,12 @@ Clement Chevalier (IMSV, Switzerland, and IRSN, France)
 \examples{
 #vorob_threshold
 
-set.seed(8)
-N <- 9 #number of observations
+set.seed(9)
+N <- 20 #number of observations
 T <- 80 #threshold
 testfun <- branin
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 

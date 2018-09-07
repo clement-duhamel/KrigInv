@@ -7,7 +7,7 @@ integration_design <- function(integcontrol=NULL,d=NULL,lower,upper,model=NULL,T
 	
 	if(is.null(d)) d <- length(lower)
 	if (length(lower) != length(upper) ){
-		print("Error in integration_Parameters: 'lower' and 'upper' must have the same length")
+		print("Error in integration_design: 'lower' and 'upper' must have the same length")
 		return(NULL)
 	}
 	
@@ -64,16 +64,16 @@ integration_design <- function(integcontrol=NULL,d=NULL,lower,upper,model=NULL,T
 		if(integcontrol$init.distrib=="MC") initial.integration.points <- t(lower+t(matrix(runif(d*integcontrol$n.candidates),ncol=d))*(upper-lower))
 		if(integcontrol$init.distrib=="spec") initial.integration.points <- integcontrol$init.distrib.spec
 		
-		if(d==1) initial.integration.points<-matrix(initial.integration.points,ncol=1)
+		if(d==1) initial.integration.points <- matrix(initial.integration.points,ncol=1)
 		
 		#prediction on these initial candidate points
 		if(is.null(model)){
-			print("Error in integration_Parameters: for 'sur', 'jn', 'imse' or 'timse' importance sampling distribution you must set the argument 'model'")
+			print("Error in integration_design: for 'sur', 'jn', 'imse' or 'timse' importance sampling distribution you must set the argument 'model'")
 			return(NULL)
 		}
 		predictions <- predict_nobias_km(object=model,newdata=initial.integration.points,type="UK")
 		
-		pn <- 1 - pnorm((T-predictions$mean)/predictions$sd)
+		pn <- excursion_probability(mn = predictions$mean,sn = predictions$sd,T = T)
 		Tau.n <- pn*(1-pn)
 		
 		Tau.n.sum <- sum(Tau.n)
@@ -110,12 +110,12 @@ integration_design <- function(integcontrol=NULL,d=NULL,lower,upper,model=NULL,T
     
 	  #prediction on these initial candidate points
 	  if(is.null(model)){
-	    print("Error in integration_Parameters: for 'sur', 'jn', 'imse' or 'timse' importance sampling distribution you must set the argument 'model'")
+	    print("Error in integration_design: for 'sur', 'jn', 'imse' or 'timse' importance sampling distribution you must set the argument 'model'")
 	    return(NULL)
 	  }
 	  predictions <- predict_nobias_km(object=model,newdata=initial.integration.points,type="UK")
 	  
-	  pn <- pnorm((predictions$mean-T)/predictions$sd)
+	  pn <- excursion_probability(mn = predictions$mean,sn = predictions$sd,T = T)
     integ.pn <- mean(pn)
 	  pn.sort <- sort(pn)#tres cher
     
@@ -163,13 +163,13 @@ integration_design <- function(integcontrol=NULL,d=NULL,lower,upper,model=NULL,T
 		if(d==1) initial.integration.points<-matrix(initial.integration.points,ncol=1)
 		
 		if(is.null(model)){
-			print("Error in integration_Parameters: for 'sur', 'jn', 'imse' or 'timse' importance sampling distribution you must set the argument 'model'")
+			print("Error in integration_design: for 'sur', 'jn', 'imse' or 'timse' importance sampling distribution you must set the argument 'model'")
 			return(NULL)
 		}		
 		predictions <- predict_nobias_km(object=model,newdata = initial.integration.points,type="UK",cov.compute=FALSE)
 		
     M <- integcontrol$n.candidates
-    pn <- pnorm((predictions$mean - T)/predictions$sd)
+    pn <- excursion_probability(mn = predictions$mean,sn = predictions$sd,T = T)
 		pn.sum <- sum(pn)
 		prob.n <- pmax(pn/pn.sum,min.prob/M)
 		prob.n <- prob.n/sum(prob.n)
@@ -204,7 +204,7 @@ integration_design <- function(integcontrol=NULL,d=NULL,lower,upper,model=NULL,T
 		
 		#prediction on these initial candidate points
 		if(is.null(model)){
-			print("Error in integration_Parameters: for 'sur', 'jn', 'imse' or 'timse' importance sampling distribution you must set the argument 'model'")
+			print("Error in integration_design: for 'sur', 'jn', 'imse' or 'timse' importance sampling distribution you must set the argument 'model'")
 			return(NULL)
 		}
 		
@@ -212,11 +212,22 @@ integration_design <- function(integcontrol=NULL,d=NULL,lower,upper,model=NULL,T
 		
 		mk <- predictions$mean
 		sk <- predictions$sd
-		weight <- 1/sqrt(2*pi*(sk^2+0^2)) * exp(-0.5*((mk-T)/sqrt(sk^2+0^2))^2)
+		
+		if(length(T)==1){
+		  weight <- 1/sqrt(2*pi*sk^2) * exp(-0.5*((mk-T)/sk)^2)
+		}else{
+		  weight0 <- 1/sqrt(2*pi*sk^2)
+		  weight <- 0
+		  for(i in 1:length(T)){
+		    Ti <- T[i]
+		    weight <- weight + weight0 * exp(-0.5*((mk-Ti)/sk)^2)
+		  }
+		}
+		
 		weight[is.nan(weight)] <- 0
 		
-		if(integcontrol$distrib=="timse") timse <- weight * sk
-		if(integcontrol$distrib=="imse") timse <- sk
+		if(integcontrol$distrib=="timse") timse <- weight * sk*sk
+		if(integcontrol$distrib=="imse") timse <- sk*sk
 		
 		timse.sum <- sum(timse)
     if(timse.sum==0) timse.sum <- 1

@@ -1,9 +1,9 @@
 timse_optim_parallel <- function(x, integration.points,integration.weights=NULL,
-		intpoints.oldmean=NULL,intpoints.oldsd=NULL,precalc.data,
-		model, T, new.noise.var=0,weight=NULL,batchsize,current.timse){
+		                        intpoints.oldmean=NULL,intpoints.oldsd=NULL,precalc.data,
+		                        model, T=NULL, new.noise.var=0,weight=NULL,batchsize,current.timse){
 	
 	if(!is.null(new.noise.var)){
-		if(new.noise.var==0) {
+		if(new.noise.var == 0) {
 			new.noise.var <- NULL
 		}
 	}					
@@ -20,7 +20,7 @@ timse_optim_parallel <- function(x, integration.points,integration.weights=NULL,
 		xx <- X.new[,i]
 		tp2<-matrix(tp1-as.numeric(xx),ncol=d,byrow=TRUE)^2
 		mysums <- sqrt(rowSums(tp2))
-		mysums[n+i] <- Inf #because this one is usually equal to zero...
+		mysums[n+i] <- Inf #because this one is always equal to zero
 		mindist <- min(mindist,mysums)		
 	}
 		
@@ -33,8 +33,7 @@ timse_optim_parallel <- function(x, integration.points,integration.weights=NULL,
 	
 		mk <- krig$mean ; sk <- krig$sd ; newXvar <- sk*sk
 		F.newdata <- krig$F.newdata ; c.newdata <- krig$c;Sigma.r <- krig$cov
-		Sigma.r.norm <- krig$cov / crossprod(t(sk))
-	
+		
 		kn = computeQuickKrigcov(model,integration.points,X.new,precalc.data, F.newdata , c.newdata) 
 	
 		krig2  <- predict_update_km_parallel (newXmean=mk,newXvar=newXvar,newXvalue=mk, 
@@ -50,9 +49,6 @@ timse_optim_parallel <- function(x, integration.points,integration.weights=NULL,
 
 		if (is.null(integration.weights)) {crit <- mean(tmse)
 		}else crit <- sum(tmse*integration.weights)
-
-	}else crit <- current.timse + 0.01		
-
+	}else crit <- current.timse * 1.01		
 	return(crit)
-	
 }

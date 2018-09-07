@@ -1,13 +1,13 @@
 \name{EGIparallel}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{EGIparallel}
 
 \title{
-Efficient Global Inversion: Parallel version.
+Efficient Global Inversion: parallel version to get batchsize locations at each iteration
 }
 \description{
-Sequential sampling based on the optimization of a kriging-based criterion, with model update after each evaluation. 
-Similar to EGI, except that samples can be chosen in batches instead of one at a time. Three criteria are available for now.
+Sequential sampling based on the optimization of a kriging-based criterion, with model update after each iteration. The criterias aim at identifying an excursion set or one/many level sets. At each iteration batchsize new locations are evaluated. 
+Different criteria are available for selecting experiments. The pointwise criteria are \code{"bichon"}, \code{"ranjan"}, \code{"tmse"}, \code{"tsee"}  and are fast to compute. These criteria can be used only with batchsize = 1. In addition, integral criteria require numerical integration and can potentially deliver more than one new location per iteration. Available integral criteria are \code{"imse"}, \code{"timse"}, \code{"sur"}, \code{"jn"}, \code{"vorob"}. 
 }
 \usage{
 EGIparallel(T, model, method = NULL, method.param=NULL, 
@@ -18,19 +18,20 @@ optimcontrol = NULL, kmcontrol = NULL, integcontrol = NULL, ...)
 
 \arguments{
   \item{T}{
-Target value (scalar). The sampling algorithm and the underlying kriging model at finding the points for which the output is close to T.
+Array containing one or several thresholds. The criteria which can be used with multiple thresholds are \code{"tmse"}, \code{"timse"}, \code{"sur"}, \code{"jn"}.
 }
   \item{model}{
 A Kriging model of \code{\link[DiceKriging]{km}} class.
 }
   \item{method}{
-Criterion used for choosing observations. The two sampling methods available in parallel version are \code{"sur"}, \code{"timse"} and \code{"vorob"}.
+Criterion used for choosing observations. 
 }
   \item{method.param}{
-Optional tolerance value (a real number) for method \code{"timse"}.
+Optional tolerance value (scalar) for methods \code{"ranjan"}, \code{"bichon"}, \cr
+\code{"tmse"} and \code{"timse"}. If not provided, default value is used (1 for ranjan and bichon, 0 for tmse and timse).
 }
   \item{batchsize}{
-Number of points to sample simultaneously. The sampling criterion will return \code{batchsize} points at a time for sampling.
+Number of points to sample simultaneously. The sampling criterion will return \code{batchsize} points at each iteration. Some criteria can be used only with batchsize = 1 (see description).
 }
   \item{new.noise.var}{
 Optional scalar value of the noise variance of the new observations.
@@ -93,33 +94,34 @@ The function used to build the integration points and weights (based on the opti
 }
 
 \references{
-Chevalier C., Picheny V., Ginsbourger D. (2012), \emph{The KrigInv package: An efficient and user-friendly R implementation of Kriging-based inversion algorithms} ,\cr
-\url{http://hal.archives-ouvertes.fr/hal-00713537/}
+Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2014), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set}, Technometrics, vol. 56(4), pp 455-465
 
-Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2011), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set} ,\url{http://hal.archives-ouvertes.fr/hal-00641108/}
+Picheny V., Ginsbourger D., Roustant O., Haftka R.T., (2010) \emph{Adaptive designs of experiments for accurate approximation of a target region}, J. Mech. Des. vol. 132(7)
 
-Bect J., Ginsbourger D., Li L., Picheny V., Vazquez E. (2010), \emph{Sequential design of computer experiments for the estimation of a probability of failure}, Statistics and Computing, pp.1-21, 2011, \url{http://arxiv.org/abs/1009.5177}
+Chevalier C. (2013) \emph{Fast uncertainty reduction strategies relying on Gaussian process models} Ph.D Thesis, University of Bern
 }
 
 \author{
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 
-Victor Picheny (CERFACS, Toulouse, France) 
+Victor Picheny (INRA, Toulouse, France)
+
+David Ginsbourger (IDIAP Martigny and University of Bern, Switzerland)
 }
 
-\seealso{\code{\link{EGI}}, \code{\link{max_sur_parallel}}, \code{\link{sur_optim_parallel}}}
+\seealso{\code{\link{EGI}}, \code{\link{max_sur_parallel}}}
 
 \examples{
 #EGIparallel
 
-set.seed(8)
-N <- 9 #number of observations
-T <- 80 #threshold
+set.seed(9)
+N <- 20 #number of observations
+T <- c(20,60) #thresholds
 testfun <- branin
 lower <- c(0,0)
 upper <- c(1,1)
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 
@@ -151,8 +153,8 @@ type="pn",new.points=iter*batchsize,col.points.end="red",cex.points=2)
 #same example with noisy initial observations and noisy new observations
 branin.noise <- function(x) return(branin(x)+rnorm(n=1,sd=30))
 
-set.seed(8)
-N <- 9;T <- 80
+set.seed(9)
+N <- 20;T <- c(20,60)
 testfun <- branin.noise
 lower <- c(0,0);upper <- c(1,1)
 
@@ -172,7 +174,7 @@ batchsize <- 6
 obj <- EGIparallel(T=T,model=model.noise,method="sur",batchsize=batchsize,
                    fun=testfun,iter=iter,lower=lower,upper=upper,
                    optimcontrol=optimcontrol,integcontrol=integcontrol,
-                   new.noise.var=30*30)
+                   new.noise.var=10*10)
 
 
 par(mfrow=c(1,2))

@@ -1,12 +1,11 @@
 \name{predict_nobias_km}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{predict_nobias_km}
 
-\title{ Kriging predictions without any adjustment factor for the kriging variances }
+\title{ Kriging predictions}
 \description{
-This function is a simple modification of the predict.km function from the DiceKriging package. 
-The only change lies in the adjustment factor for the kriging variances when universal kriging is used.
-Here this adjustment factor is simply removed. The rest of the function remains exactly as in the function predict.km of the DiceKriging package.
+This function is similar to the predict.km function from the DiceKriging package. 
+The only change is the additionnal F.newdata output.
 }
 \usage{
 predict_nobias_km(object, newdata, type = "UK", 
@@ -49,10 +48,6 @@ No other arguments.
   \item{F.newdata}{value of the trend function at \code{newdata}.}
 }
 
-\details{ 
-When \code{type = "UK"}, the estimated variance and covariance are no longer multiplied by n/(n-p), where \code{n} and \code{p} are respectively the number of rows and the number of columns of the design matrix F. 
-}
-
 \section{Warning}{
 Beware that the only consistency check between \code{newdata} and the experimental design is to test whether they have same number of columns. In that case, the columns of \code{newdata} are interpreted in the same order as the initial design.
 }
@@ -80,7 +75,11 @@ J. Sacks, W.J. Welch, T.J. Mitchell, and H.P. Wynn (1989), Design and analysis o
 
 }
 
-\author{ O. Roustant, D. Ginsbourger, Ecole des Mines de St-Etienne. }
+\author{
+O. Roustant (Ecole des Mines de St-Etienne, France)
+
+David Ginsbourger (IDIAP Martigny and University of Bern, Switzerland)
+}
 
 \seealso{  \code{\link[DiceKriging]{predict.km}},  \code{\link[DiceKriging]{km}} }
 
@@ -89,11 +88,11 @@ J. Sacks, W.J. Welch, T.J. Mitchell, and H.P. Wynn (1989), Design and analysis o
 
 \examples{
 #predict_nobias_km
-set.seed(8)
-N <- 9 #number of observations
+set.seed(9)
+N <- 20 #number of observations
 testfun <- branin
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 
@@ -105,7 +104,6 @@ model <- km(formula=~., design = design,
 n.grid <- 100
 x.grid <- y.grid <- seq(0,1,length=n.grid)
 
-#points where we want to compute prediction (if a point new.x is added to the doe)
 newdata <- expand.grid(x.grid,y.grid)
 pred <- predict_nobias_km(object=model,newdata=newdata,type="UK",se.compute=TRUE)
 
@@ -114,7 +112,7 @@ z.grid2 <- matrix(pred$sd, n.grid, n.grid)
 
 par(mfrow=c(1,2))
 
-#plots: contour of the criterion, doe points and new point
+#plots: contour of the kriging mean and stdev
 image(x=x.grid,y=y.grid,z=z.grid1,col=grey.colors(10))
 contour(x=x.grid,y=y.grid,z=z.grid1,15,add=TRUE)
 points(design, col="black", pch=17, lwd=4,cex=2)

@@ -1,10 +1,10 @@
 print_uncertainty_2d <-
 function(model,T,type="pn",lower=c(0,0),upper=c(1,1),
-			resolution=200,new.points=0,xlab="",
-			ylab="",main="",xscale=c(0,1),yscale=c(0,1),show.points=TRUE,cex.main=1,cex.lab=1,
+			resolution=200,new.points=0,
+			xscale=c(0,1),yscale=c(0,1),show.points=TRUE,
 			cex.contourlab=1,cex.points=1,cex.axis=1,pch.points.init=17,pch.points.end=17,
 			col.points.init="black",col.points.end="red",nlevels=10,levels=NULL,xaxislab=NULL,
-			yaxislab=NULL,xaxispoint=NULL,yaxispoint=NULL,xdecal=3,ydecal=3,krigmeanplot=FALSE,vorobmean=FALSE){
+			yaxislab=NULL,xaxispoint=NULL,yaxispoint=NULL,krigmeanplot=FALSE,vorobmean=FALSE,...){
 	
   alpha <- NULL
 	s1 <- seq(from=lower[1],to=upper[1],length=resolution)
@@ -13,7 +13,7 @@ function(model,T,type="pn",lower=c(0,0),upper=c(1,1),
 	img_design <- expand.grid(s1,s2)
 	
 	pred <- predict_nobias_km(object=model,newdata=img_design,type="UK")
-	pn <- pnorm((pred$mean - T)/pred$sd)
+	pn <- excursion_probability(mn = pred$mean,sn = pred$sd,T = T)
 	
 	if(type=="pn"){
 		#we print pn(x)
@@ -21,8 +21,18 @@ function(model,T,type="pn",lower=c(0,0),upper=c(1,1),
 	}else if(type=="sur"){
 		myvect <- pn * (1-pn)		
 	}else if(type=="timse"){
-		Wn <- 1/(sqrt(2*pi)*pred$sd)*exp(-1/2*((pred$mean-T)/pred$sd)^2)
-		myvect <- (pred$sd)^2 * Wn
+	  if(length(T)==1){
+	    Wn <- 1/(sqrt(2*pi)*pred$sd)*exp(-1/2*((pred$mean-T)/pred$sd)^2)
+	    myvect <- (pred$sd)^2 * Wn
+	  }else{
+	    Wn0 <- 1/(sqrt(2*pi)*pred$sd)
+	    Wn <- 0
+	    for(i in 1:length(T)){
+	      Ti <- T[i]
+	      Wn <- Wn + Wn0 * exp(-1/2*((pred$mean-Ti)/pred$sd)^2)
+	    }
+	    myvect <- (pred$sd)^2 * Wn
+	  }
 	}
 	else if(type=="imse"){
 		myvect <- (pred$sd)^2
@@ -45,10 +55,8 @@ function(model,T,type="pn",lower=c(0,0),upper=c(1,1),
 	scale.y <- yscale[1] + s2 * (yscale[2]-yscale[1])
 	
 	axes <- is.null(xaxislab)
-	image(x=scale.x,y=scale.y,z=mymatrix,col=grey.colors(10),xlab="",ylab="",cex.axis=cex.axis,main=main,cex.main=cex.main,cex.lab=cex.lab,axes=axes)
-	mtext(xlab, side=1, line=xdecal,cex=cex.lab ) 
-	mtext(ylab, side=2, line=ydecal,cex=cex.lab )
-	
+	image(x=scale.x,y=scale.y,z=mymatrix,col=grey.colors(10),cex.axis=cex.axis,axes=axes,...)
+  
 	if(!is.null(xaxislab)){
 		axis(side=1,at=xaxispoint,labels=xaxislab,cex.axis=cex.axis)
 		axis(side=2,at=yaxispoint,labels=yaxislab,cex.axis=cex.axis)

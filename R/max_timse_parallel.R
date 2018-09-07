@@ -17,8 +17,17 @@
 	intpoints.oldmean <- pred$mean ; intpoints.oldsd <- pred$sd;
 
 	if(!imse){
-	  weight <- 1/sqrt(2*pi*(intpoints.oldsd^2+epsilon^2)) * exp(-0.5*((intpoints.oldmean-T)/sqrt(intpoints.oldsd^2+epsilon^2))^2)
-	  weight[is.nan(weight)] <- 0
+	  if(length(T)==1){
+	    weight <- 1/sqrt(2*pi*(intpoints.oldsd^2+epsilon^2)) * exp(-0.5*((intpoints.oldmean-T)/sqrt(intpoints.oldsd^2+epsilon^2))^2)
+	    weight[is.nan(weight)] <- 0
+    }else{
+      weight0 <- 1/sqrt( 2*pi*(intpoints.oldsd^2+epsilon^2) )
+      weight <- 0
+      for(i in 1:length(T)){
+        Ti <- T[i]
+        weight <- weight + weight0 * exp(-0.5*((intpoints.oldmean-Ti)/sqrt(intpoints.oldsd^2+epsilon^2))^2)
+      }
+    }
 	}else{
 		weight <- 1
 	}

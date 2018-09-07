@@ -1,5 +1,5 @@
 \name{ranjan_optim}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{ranjan_optim}
 
 \title{ Ranjan et al.'s Expected Improvement criterion }
@@ -8,7 +8,7 @@
 Evaluation of Ranjan's Expected Feasibility criterion. To be used in optimization routines, like in \code{\link{max_infill_criterion}}.
 }
 \usage{
-ranjan_optim(x, model, T, method.param = NULL)
+ranjan_optim(x, model, T, method.param = 1)
 }
 
 \arguments{
@@ -23,7 +23,7 @@ An object of class \code{\link[DiceKriging]{km}} (Kriging model).
 Target value (scalar).
 }
   \item{method.param}{
-Scalar tolerance around the target T (default value is 1).
+Scalar tolerance around the target T. Default value is 1.
 }
 }
 
@@ -34,17 +34,17 @@ When the argument \code{x} is a p*d matrix the function returns a vector of size
 }
 
 \references{
-Ranjan, P., Bingham, D., Michailidis, G.: Sequential experiment design for contour estimation from complex computer codes. Technometrics 50(4), 527-541 (2008)
+Ranjan, P., Bingham, D., Michailidis, G. (2008) \emph{Sequential experiment design for contour estimation from complex computer codes} Technometrics 50(4), pp 527-541
 
 Bect J., Ginsbourger D., Li L., Picheny V., Vazquez E. (2010), \emph{Sequential design of computer experiments for the estimation of a probability of failure}, Statistics and Computing, pp.1-21, 2011, \url{http://arxiv.org/abs/1009.5177}
 }
 
 \author{ 
-V. Picheny (CERFACS, Toulouse, France)
+Victor Picheny (INRA, Toulouse, France)
 
-D. Ginsbourger (IMSV, University of Bern, Switzerland)
+David Ginsbourger (IDIAP Martigny and University of Bern, Switzerland)
 
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 }
 
 \seealso{\code{\link{EGI}}, \code{\link{max_infill_criterion}}}
@@ -53,12 +53,12 @@ Clement Chevalier (IMSV, Switzerland, and IRSN, France)
 ########################################################################
 #ranjan_optim
 
-set.seed(8)
-N <- 9 #number of observations
+set.seed(9)
+N <- 20 #number of observations
 T <- 80 #threshold
 testfun <- branin
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 
@@ -76,7 +76,7 @@ x <- expand.grid(x.grid, y.grid)
 ranjan.grid <- ranjan_optim(x=x,T=T,model=model)
 z.grid <- matrix(ranjan.grid, n.grid, n.grid)
 
-#plots: contour of the criterion, doe points and new point
+#plots: contour of the criterion, DOE points and new point
 image(x=x.grid,y=y.grid,z=z.grid,col=grey.colors(10))
 contour(x=x.grid,y=y.grid,z=z.grid,25,add=TRUE)
 points(design, col="black", pch=17, lwd=4,cex=2)

@@ -4,13 +4,13 @@ max_infill_criterion <- function(lower, upper, optimcontrol=NULL, method, T, mod
 	d <- model@d
 	if(is.null(optimcontrol$method)) optimcontrol$method <- "genoud"
 					
-	if (method=="tmse")        funk.optim <- tmse_optim
-	else if (method=="ranjan") funk.optim <- ranjan_optim
-	else if (method=="bichon") funk.optim <- bichon_optim
-    else if (method=="tsee") funk.optim <- tsee_optim
+	if (method=="tmse")         funk.optim <- tmse_optim
+	else if (method=="ranjan")  funk.optim <- ranjan_optim
+	else if (method=="bichon")  funk.optim <- bichon_optim
+  else if (method=="tsee")    funk.optim <- tsee_optim
 	else{
-		funk.optim <- ranjan_optim
-		print("Unknown sampling criterion - switched to Ranjan EI")
+	  print("Unknown sampling criterion. Switched to Ranjan criterion")
+	  funk.optim <- ranjan_optim
 	}
 	
 	if(optimcontrol$method == "discrete"){
@@ -18,9 +18,7 @@ max_infill_criterion <- function(lower, upper, optimcontrol=NULL, method, T, mod
 			n.discrete.points<-d*100
 			optimcontrol$optim.points <- t(lower + t(matrix(runif(d*n.discrete.points),ncol=d)) * (upper - lower))
 		}
-		optim.points <- optimcontrol$optim.points
-		optim.points <- data.frame(optim.points)
-		
+		optim.points <- optimcontrol$optim.points;optim.points <- data.frame(optim.points)
     x <- optim.points
     
 		#all the points are evaluated simultaneously in this case

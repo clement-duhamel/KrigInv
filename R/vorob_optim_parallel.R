@@ -2,12 +2,12 @@ vorob_optim_parallel <- function(x, integration.points,integration.weights=NULL,
 						intpoints.oldmean,intpoints.oldsd,precalc.data,
 						model, T, new.noise.var=NULL,batchsize,alpha,current.vorob){
 	
-  
 	if(!is.null(new.noise.var)){
 		if(new.noise.var == 0) {
 			new.noise.var <- NULL
 		}
 	}
+  
 	#x is a vector of size d * batchsize
 	d <- model@d
 	n <- model@n

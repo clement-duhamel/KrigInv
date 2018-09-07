@@ -1,14 +1,13 @@
 \name{predict_update_km_parallel}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{predict_update_km_parallel}
 
 \title{
-Quick update of kriging means and variances when many new points are added.
+Quick update of kriging means and variances when one or many new points are added to the DOE.
 }
 
 \description{
-This function is the parallel version of the function \code{\link{predict_update_km}}.
-It uses kriging update formula to quickly compute kriging mean and variances at points newdata, when \code{r} new points \code{newX} are added. 
+The functions uses the kriging update formulas to quickly compute kriging mean and variances at points newdata, when \code{r} new points \code{newX} are added. 
 }
 
 \usage{
@@ -47,25 +46,23 @@ Kriging covariances between the points \code{newdata} and the r points \code{new
 }
 
 \references{
-Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2011), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set} ,\url{http://hal.archives-ouvertes.fr/hal-00641108/}
-
-Chevalier C., Ginsbourger D. (2012), \emph{Corrected Kriging update formulae for batch-sequential data assimilation} ,\url{http://arxiv.org/pdf/1203.6452.pdf}
+Chevalier C., Ginsbourger D. (2014), \emph{Corrected Kriging update formulae for batch-sequential data assimilation}, in Pardo-Iguzquiza, E., et al. (Eds.) Mathematics of Planet Earth, pp 119-122
 }
 
 \author{
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 }
 
-\seealso{\code{\link{EGIparallel}}, \code{\link{max_sur_parallel}}, \code{\link{sur_optim_parallel}}}
+\seealso{\code{\link{computeQuickKrigcov}}, \code{\link{precomputeUpdateData}}}
 
 \examples{
 #predict_update_km_parallel
 
-set.seed(8)
-N <- 9 #number of observations
+set.seed(9)
+N <- 20 #number of observations
 testfun <- branin
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 
@@ -78,6 +75,7 @@ model <- km(formula=~., design = design,
 n.grid <- 20 #you can run it with 100
 x.grid <- y.grid <- seq(0,1,length=n.grid)
 newdata <- expand.grid(x.grid,y.grid)
+newdata <- as.matrix(newdata)
 precalc.data <- precomputeUpdateData(model=model,integration.points=newdata)
 pred2 <- predict_nobias_km(object=model,newdata=newdata,type="UK",se.compute=TRUE)
 newdata.oldmean <- pred2$mean; newdata.oldsd <- pred2$sd
@@ -106,7 +104,6 @@ z.grid2 <- matrix(updated.predictions$sd, n.grid, n.grid)
 
 par(mfrow=c(1,2))
 
-#plots: contour of the criterion, doe points and new point
 image(x=x.grid,y=y.grid,z=z.grid1,col=grey.colors(10))
 contour(x=x.grid,y=y.grid,z=z.grid1,15,add=TRUE)
 points(design, col="black", pch=17, lwd=4,cex=2)

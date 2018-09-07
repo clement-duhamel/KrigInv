@@ -1,5 +1,5 @@
 \name{max_timse_parallel}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{max_timse_parallel}
 
 \title{ Minimizer of the parallel timse criterion}
@@ -39,7 +39,7 @@ Optional list of control parameter for the computation of integrals, containing 
 If nothing is specified, default values are used (see: function \code{\link{integration_design}} for more details). 
 }
   \item{T}{
-Target value (scalar).
+Array containing one or several thresholds.
 }
   \item{model}{
 A Kriging model of \code{\link[DiceKriging]{km}} class.
@@ -62,16 +62,17 @@ Optional boolean to decide if the \code{"imse"} criterion should be used instead
 }
 
 \references{
-Picheny, V., Ginsbourger, D., Roustant, O., Haftka, R.T., Adaptive designs of experiments for accurate approximation of a target region, J. Mech. Des. - July 2010 - Volume 132, Issue 7, \url{http://dx.doi.org/10.1115/1.4001873}
+Picheny V., Ginsbourger D., Roustant O., Haftka R.T., (2010) \emph{Adaptive designs of experiments for accurate approximation of a target region}, J. Mech. Des. vol. 132(7)
 
-Picheny V., Improving accuracy and compensating for uncertainty in surrogate modeling, Ph.D. thesis, University of Florida and Ecole Nationale Superieure des Mines de Saint-Etienne
+Picheny V. (2009) \emph{Improving accuracy and compensating for uncertainty in surrogate modeling}, Ph.D. thesis, University of Florida and Ecole Nationale Superieure des Mines de Saint-Etienne
 
-Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2011), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set} ,\url{http://hal.archives-ouvertes.fr/hal-00641108/}
+Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2014), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set}, Technometrics, vol. 56(4), pp 455-465
 }
 
 \author{
-Victor Picheny (CERFACS, Toulouse, France)
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Victor Picheny (INRA, Toulouse, France)
+
+Clement Chevalier (University of Neuchatel, Switzerland)
 }
 
 \seealso{\code{\link{EGIparallel}},\code{\link{max_sur_parallel}}}
@@ -80,14 +81,14 @@ Clement Chevalier (IMSV, Switzerland, and IRSN, France)
 #max_timse_parallel
 
 
-set.seed(8)
-N <- 9 #number of observations
-T <- 80 #threshold
+set.seed(9)
+N <- 20 #number of observations
+T <- c(40,80) #thresholds
 testfun <- branin
 lower <- c(0,0)
 upper <- c(1,1)
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 
@@ -110,8 +111,8 @@ obj <- max_timse_parallel(lower=lower,upper=upper,optimcontrol=optimcontrol,
                         #5 optims in dimension 2 !
 
 obj$par;obj$value #optimum in 5 new points
-new.model <- update_km(model=model,NewX=obj$par,NewY=apply(obj$par,1,testfun),
-                       CovReEstimate=TRUE)
+new.model <- update(object=model,newX=obj$par,newy=apply(obj$par,1,testfun),
+                       cov.reestim=TRUE)
 
 par(mfrow=c(1,2))
 print_uncertainty(model=model,T=T,type="pn",lower=lower,upper=upper,

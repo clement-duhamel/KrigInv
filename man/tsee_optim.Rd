@@ -1,11 +1,11 @@
 \name{tsee_optim}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{tsee_optim}
 
 \title{ Two Sided Expected Exceedance criterion }
 
 \description{
-Evaluation of a two-sided Expected Exceedance criterion. To be used in optimization routines, like in \code{\link{max_infill_criterion}}.
+Evaluation of the Two-Sided Expected Exceedance criterion. To be used in optimization routines, like in \code{\link{max_infill_criterion}}.
 }
 \usage{
 tsee_optim(x, model, T)
@@ -32,7 +32,8 @@ When the argument \code{x} is a p*d matrix the function returns a vector of size
 
 
 \author{
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
+
 Yann Richet (IRSN, France)
 }
 \seealso{\code{\link{EGI}}, \code{\link{max_infill_criterion}}}
@@ -40,12 +41,12 @@ Yann Richet (IRSN, France)
 \examples{
 #tsee_optim
 
-set.seed(8)
-N <- 9 #number of observations
+set.seed(9)
+N <- 20 #number of observations
 T <- 80 #threshold
 testfun <- branin
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 

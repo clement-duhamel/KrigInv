@@ -1,5 +1,5 @@
 \name{tmse_optim}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{tmse_optim}
 
 \title{ Targeted MSE criterion }
@@ -22,10 +22,10 @@ This argument can be either a vector of size d (for an evaluation at a single po
 An object of class \code{\link[DiceKriging]{km}} (Kriging model).
 }
   \item{T}{
-Target value (scalar).
+Array containing one or several thresholds.
 }
   \item{method.param}{
-Scalar tolerance around the target T.
+Scalar tolerance around the targets T.
 }
 }
 
@@ -35,17 +35,17 @@ When the argument \code{x} is a p*d matrix the function returns a vector of size
 }
 
 \references{
-Picheny, V., Ginsbourger, D., Roustant, O., Haftka, R.T., Adaptive designs of experiments for accurate approximation of a target region, J. Mech. Des. - July 2010 - Volume 132, Issue 7, \url{http://dx.doi.org/10.1115/1.4001873}
+Picheny V., Ginsbourger D., Roustant O., Haftka R.T., (2010) \emph{Adaptive designs of experiments for accurate approximation of a target region}, J. Mech. Des. vol. 132(7)
 
-Picheny V., Improving accuracy and compensating for uncertainty in surrogate modeling, Ph.D. thesis, University of Florida and Ecole Nationale Superieure des Mines de Saint-Etienne
+Picheny V. (2009) \emph{Improving accuracy and compensating for uncertainty in surrogate modeling}, Ph.D. thesis, University of Florida and Ecole Nationale Superieure des Mines de Saint-Etienne
 }
 
 \author{ 
-V. Picheny (Ecole Centrale Paris)
+Victor Picheny (INRA, Toulouse, France)
 
-D. Ginsbourger (IMSV, University of Bern, Switzerland)
+David Ginsbourger (IDIAP Martigny and University of Bern, Switzerland)
 
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 }
 
 \seealso{\code{\link{EGI}}, \code{\link{max_infill_criterion}}}
@@ -53,12 +53,12 @@ Clement Chevalier (IMSV, Switzerland, and IRSN, France)
 \examples{
 #tmse_optim
 
-set.seed(8)
-N <- 9 #number of observations
-T <- 80 #threshold
+set.seed(9)
+N <- 20 #number of observations
+T <- c(40,80) #thresholds
 testfun <- branin
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 

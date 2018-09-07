@@ -1,17 +1,17 @@
 \name{max_sur_parallel}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{max_sur_parallel}
 
-\title{ Minimizer of the parallel sur criterion}
+\title{ Minimizer of the parallel \code{"sur"} or \code{"jn"} criterion}
 
 \description{
-Minimization, based on the package rgenoud (or on exhaustive search on a discrete set), of the sur criterion for a batch of candidate sampling points.  
+Minimization, based on the package rgenoud (or on exhaustive search on a discrete set), of the \code{"sur"} or \code{"jn"} criterion for a batch of candidate sampling points.  
 }
 
 \usage{
 max_sur_parallel(lower, upper, optimcontrol = NULL, 
 batchsize, integration.param, T,
-model, new.noise.var = 0)
+model, new.noise.var = 0,real.volume.variance=FALSE)
 }
 
 \arguments{
@@ -46,6 +46,7 @@ A Kriging model of \code{\link[DiceKriging]{km}} class.
   \item{new.noise.var}{
 Optional scalar value of the noise variance of the new observations.
 }
+\item{real.volume.variance}{Optional argument to use the \code{"jn"} criterion instead of \code{"sur"}. Default: FALSE}
 }
 
 \value{A list with components:
@@ -55,29 +56,29 @@ Optional scalar value of the noise variance of the new observations.
 }
 
 \references{
-Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2011), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set} ,\url{http://hal.archives-ouvertes.fr/hal-00641108/}
+Chevalier C., Bect J., Ginsbourger D., Vazquez E., Picheny V., Richet Y. (2014), \emph{Fast parallel kriging-based stepwise uncertainty reduction with application to the identification of an excursion set}, Technometrics, vol. 56(4), pp 455-465
 
-Chevalier C., Ginsbourger D. (2012), \emph{Corrected Kriging update formulae for batch-sequential data assimilation} ,\url{http://arxiv.org/pdf/1203.6452.pdf}
+Chevalier C., Ginsbourger D. (2014), \emph{Corrected Kriging update formulae for batch-sequential data assimilation}, in Pardo-Iguzquiza, E., et al. (Eds.) Mathematics of Planet Earth, pp 119-122
 }
 
 \author{
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 }
 
-\seealso{\code{\link{EGIparallel}},\code{\link{sur_optim_parallel}}}
+\seealso{\code{\link{EGIparallel}},\code{\link{sur_optim_parallel}},\code{\link{jn_optim_parallel}}}
 
 \examples{
 #max_sur_parallel
 
 
-set.seed(8)
-N <- 9 #number of observations
-T <- 80 #threshold
+set.seed(9)
+N <- 20 #number of observations
+T <- c(40,80) #thresholds
 testfun <- branin
 lower <- c(0,0)
 upper <- c(1,1)
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 
@@ -97,11 +98,11 @@ batchsize <- 5 #number of new points
 obj <- max_sur_parallel(lower=lower,upper=upper,optimcontrol=optimcontrol,
                         batchsize=batchsize,T=T,model=model,
                         integration.param=integration.param)
-                        #one optim in dimension 5*2 !
+                        #one (hard) optim in dimension 5*2 !
 
 obj$par;obj$value #optimum in 5 new points
-new.model <- update_km(model=model,NewX=obj$par,NewY=apply(obj$par,1,testfun),
-                       CovReEstimate=TRUE)
+new.model <- update(object=model,newX=obj$par,newy=apply(obj$par,1,testfun),
+                       cov.reestim=TRUE)
 
 
 par(mfrow=c(1,2))

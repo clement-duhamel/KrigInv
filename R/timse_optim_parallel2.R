@@ -1,7 +1,7 @@
 
 timse_optim_parallel2 <- function(x, other.points, integration.points,integration.weights=NULL,
 		intpoints.oldmean,intpoints.oldsd,precalc.data,
-		model, T, new.noise.var=NULL,weight=NULL,batchsize,current.timse){
+		model, T=NULL, new.noise.var=NULL,weight=NULL,batchsize,current.timse){
 	
 	x.complete <- c(x,other.points)
 	return(timse_optim_parallel(

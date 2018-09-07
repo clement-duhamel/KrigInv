@@ -10,7 +10,18 @@ tmse_optim <- function(x, model, T, method.param=NULL){
 	
 	if(is.null(method.param)) method.param <- 0
 	epsilon <- method.param
-	W <- 1/sqrt(2*pi*(sk^2+epsilon^2))*exp(-0.5*((mk-T)/sqrt(sk^2+epsilon^2))^2)
+	
+	if(length(T)==1){
+	  W <- 1/sqrt(2*pi*(sk^2+epsilon^2))*exp(-0.5*((mk-T)/sqrt(sk^2+epsilon^2))^2)
+	}else{
+	  W0 <- 1/sqrt(2*pi*(sk^2+epsilon^2))
+	  W <- 0
+	  for(i in 1:length(T)){
+	    Ti <- T[i]
+      W <- W + W0 *  exp(-0.5*((mk-Ti)/sqrt(sk^2+epsilon^2))^2)
+	  }
+	}
+	
 	tmse <- W*sk^2
 	return(tmse)
 }

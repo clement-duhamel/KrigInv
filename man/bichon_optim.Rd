@@ -1,5 +1,5 @@
 \name{bichon_optim}
-\Rdversion{1.3}
+\Rdversion{1.4}
 \alias{bichon_optim}
 
 \title{
@@ -11,7 +11,7 @@ Evaluation of Bichon's Expected Feasibility criterion. To be used in optimizatio
 }
 
 \usage{
-bichon_optim(x, model, T, method.param = NULL)
+bichon_optim(x, model, T, method.param = 1)
 }
 
 \arguments{
@@ -23,10 +23,10 @@ This argument can be either a vector of size d (for an evaluation at a single po
 An object of class \code{\link[DiceKriging]{km}} (Kriging model).
 }
   \item{T}{
-Target value (scalar). The sampling algorithm and the underlying kriging model aim to find the points below (resp. over) T.
+Target value (scalar).
 }
   \item{method.param}{
-Scalar tolerance around the target T. If not provided, default value used is 1.
+Scalar tolerance around the target T. Default value is 1.
 }
 }
 
@@ -38,17 +38,14 @@ When the argument \code{x} is a p*d matrix, the function returns a vector of siz
 }
 
 \references{
-Bect J., Ginsbourger D., Li L., Picheny V., Vazquez E. (2010), \emph{Sequential design of computer experiments for the estimation of a probability of failure}, Statistics and Computing, pp.1-21, 2011, \url{http://arxiv.org/abs/1009.5177}
-
-Bichon, B.J., Eldred, M.S., Swiler, L.P., Mahadevan, S., McFarland, J.M.: Efficient global reliability analysis for nonlinear implicit performance functions. 
-AIAA Journal 46 (10), 2459-2468 (2008)
+Bichon B.J., Eldred M.S., Swiler L.P., Mahadevan S., McFarland J.M. (2008) \emph{Efficient global reliability analysis for nonlinear implicit performance functions}, AIAA Journal 46(10), pp 2459-2468
 }
 \author{ 
-V. Picheny (CERFACS, Toulouse, France)
+Victor Picheny (INRA, Toulouse, France)
 
-D. Ginsbourger (IMSV, University of Bern, Switzerland)
+David Ginsbourger (IDIAP Martigny and University of Bern, Switzerland)
 
-Clement Chevalier (IMSV, Switzerland, and IRSN, France)
+Clement Chevalier (University of Neuchatel, Switzerland)
 }
 
 
@@ -57,12 +54,12 @@ Clement Chevalier (IMSV, Switzerland, and IRSN, France)
 \examples{
 #bichon_optim
 
-set.seed(8)
-N <- 9 #number of observations
+set.seed(9)
+N <- 20 #number of observations
 T <- 80 #threshold
 testfun <- branin
 
-#a 9 points initial design
+#a 20 points initial design
 design <- data.frame( matrix(runif(2*N),ncol=2) )
 response <- testfun(design)
 
@@ -71,16 +68,16 @@ response <- testfun(design)
 model <- km(formula=~., design = design, 
 	response = response,covtype="matern3_2")
 
-x <- c(0.5,0.4)#one evaluation of the bichon criterion
+x <- c(0.5,0.4) #one evaluation of the bichon criterion
 bichon_optim(x=x,T=T,model=model)
 
-n.grid <- 20 #you can run it with 100
+n.grid <- 20 # resolution. You may use a larger value.
 x.grid <- y.grid <- seq(0,1,length=n.grid)
 x <- expand.grid(x.grid, y.grid)
 bichon.grid <- bichon_optim(x=x,T=T,model=model)
 z.grid <- matrix(bichon.grid, n.grid, n.grid)
 
-#plots: contour of the criterion, doe points and new point
+#plots: contour of the criterion, DOE points and new point
 image(x=x.grid,y=y.grid,z=z.grid,col=grey.colors(10))
 contour(x=x.grid,y=y.grid,z=z.grid,25,add=TRUE)
 points(design, col="black", pch=17, lwd=4,cex=2)
