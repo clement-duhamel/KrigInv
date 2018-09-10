@@ -1,18 +1,19 @@
 \name{vorob_optim_parallel}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{vorob_optim_parallel}
 
 \title{ Parallel Vorob'ev criterion }
 \description{
-Evaluation of the parallel Vorob'ev criterion for some candidate points. To be used in optimization routines, like in \code{\link{max_vorob_parallel}}. 
-To avoid numerical instabilities, the new points are evaluated only if they are not too close to an existing observation, or if there is some observation noise. 
+Evaluation of the parallel Vorob'ev criterion for some candidate points. To be used in optimization routines, like in \code{\link{max_vorob_parallel}}.
+To avoid numerical instabilities, the new points are evaluated only if they are not too close to an existing observation, or if there is some observation noise.
 The criterion is the integral of the posterior Vorob'ev uncertainty.
 }
 \usage{
-vorob_optim_parallel(x, integration.points, integration.weights = NULL, 
-intpoints.oldmean, intpoints.oldsd, 
-precalc.data, model, T, 
-new.noise.var = NULL, batchsize, alpha, current.vorob)
+vorob_optim_parallel(x, integration.points, integration.weights = NULL,
+intpoints.oldmean, intpoints.oldsd,
+precalc.data, model, T,
+new.noise.var = NULL, batchsize, alpha, current.vorob,
+penalisation=NULL,typeEx=">")
 }
 
 \arguments{
@@ -28,6 +29,9 @@ new.noise.var = NULL, batchsize, alpha, current.vorob)
   	\item{batchsize}{Number of points to sample simultaneously. The sampling criterion will return batchsize points at a time for sampling.}
     \item{alpha}{The Vorob'ev threshold.}
   	\item{current.vorob}{Current value of the vorob criterion (before adding new observations)}
+  	\item{penalisation}{Optional penalization constant for type I errors. If equal to zero,  computes the Type II criterion.}
+    \item{typeEx}{A character (">" or "<") identifying the type of excursion}
+
 }
 \details{
 The first argument \code{x} has been chosen to be a vector of size batchsize*d (and not a matrix with batchsize rows and d columns) so that an optimizer like genoud can optimize it easily.
@@ -39,10 +43,14 @@ For example if d=2, batchsize=3 and \code{x=c(0.1,0.2,0.3,0.4,0.5,0.6)}, we will
 Chevalier C., Ginsbouger D., Bect J., Molchanov I. (2013) \emph{Estimating and quantifying uncertainties on level sets using the Vorob'ev expectation and deviation with gaussian process models} mODa 10, Advances in Model-Oriented Design and Analysis, Contributions to Statistics, pp 35-43
 
 Chevalier C. (2013) \emph{Fast uncertainty reduction strategies relying on Gaussian process models} Ph.D Thesis, University of Bern
+
+Azzimonti, D., Ginsbourger, D., Chevalier, C., Bect, J., and Richet, Y. (2018). \emph{Adaptive design of experiments for conservative estimation of excursion sets}. Under revision. Preprint at \href{https://hal.archives-ouvertes.fr/hal-01379642}{hal-01379642}
 }
 
 \author{
 Clement Chevalier (University of Neuchatel, Switzerland)
+
+Dario Azzimonti (IDSIA, Switzerland)
 }
 
 \seealso{\code{\link{EGIparallel}}, \code{\link{max_vorob_parallel}} }
@@ -61,7 +69,7 @@ response <- testfun(design)
 
 #km object with matern3_2 covariance
 #params estimated by ML from the observations
-model <- km(formula=~., design = design, 
+model <- km(formula=~., design = design,
 	response = response,covtype="matern3_2")
 
 ###we need to compute some additional arguments:
@@ -83,7 +91,7 @@ precalc.data <- precomputeUpdateData(model,integration.points)
 batchsize <- 4
 x <- c(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8)
 #one evaluation of the vorob_optim_parallel criterion
-#we calculate the expectation of the future "vorob" uncertainty 
+#we calculate the expectation of the future "vorob" uncertainty
 #when 4 points are added to the doe
 #the 4 points are (0.1,0.2) , (0.3,0.4), (0.5,0.6), (0.7,0.8)
 vorob_optim_parallel(x=x,integration.points=integration.points,
@@ -93,7 +101,7 @@ vorob_optim_parallel(x=x,integration.points=integration.points,
           batchsize=batchsize,alpha=alpha,current.vorob=Inf)
 
 
-#the function max_vorob_parallel will help to find the optimum: 
+#the function max_vorob_parallel will help to find the optimum:
 #ie: the batch of 4 minimizing the expectation of the future uncertainty
 
 }

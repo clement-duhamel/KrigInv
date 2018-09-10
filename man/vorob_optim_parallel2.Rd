@@ -1,19 +1,20 @@
 \name{vorob_optim_parallel2}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{vorob_optim_parallel2}
 
 \title{ Parallel Vorob'ev criterion }
 \description{
-Evaluation of the Vorob'ev criterion for some candidate points, assuming that some other points are also going to be evaluated. To be used in optimization routines, like in \code{\link{max_vorob_parallel}}. 
-To avoid numerical instabilities, the new points are evaluated only if they are not too close to an existing observation, or if there is some observation noise. 
+Evaluation of the Vorob'ev criterion for some candidate points, assuming that some other points are also going to be evaluated. To be used in optimization routines, like in \code{\link{max_vorob_parallel}}.
+To avoid numerical instabilities, the new points are evaluated only if they are not too close to an existing observation, or if there is some observation noise.
 The criterion is the integral of the posterior Vorob'ev uncertainty.
 }
 \usage{
-vorob_optim_parallel2(x, other.points, 
-integration.points, integration.weights = NULL, 
-intpoints.oldmean, intpoints.oldsd, precalc.data, 
-model, T, new.noise.var = NULL, 
-batchsize, alpha, current.vorob)
+vorob_optim_parallel2(x, other.points,
+integration.points, integration.weights = NULL,
+intpoints.oldmean, intpoints.oldsd, precalc.data,
+model, T, new.noise.var = NULL,
+batchsize, alpha, current.vorob,
+penalisation = NULL, typeEx = ">")
 }
 
 \arguments{
@@ -30,6 +31,8 @@ batchsize, alpha, current.vorob)
   	\item{batchsize}{Number of points to sample simultaneously. The sampling criterion will return batchsize points at a time for sampling.}
   	\item{alpha}{The Vorob'ev threshold.}
     \item{current.vorob}{Current value of the vorob criterion (before adding new observations)}
+    \item{penalisation}{Optional penalization constant for type I errors. If equal to zero,  computes the Type II criterion.}
+    \item{typeEx}{A character (">" or "<") identifying the type of excursion}
 }
 \details{
 The first argument \code{x} has been chosen to be a vector of size d so that an optimizer like genoud can optimize it easily.
@@ -45,6 +48,8 @@ Chevalier C. (2013) \emph{Fast uncertainty reduction strategies relying on Gauss
 
 \author{
 Clement Chevalier (University of Neuchatel, Switzerland)
+
+Dario Azzimonti (IDSIA, Switzerland)
 }
 
 \seealso{\code{\link{EGIparallel}}, \code{\link{max_vorob_parallel}} }
@@ -63,7 +68,7 @@ response <- testfun(design)
 
 #km object with matern3_2 covariance
 #params estimated by ML from the observations
-model <- km(formula=~., design = design, 
+model <- km(formula=~., design = design,
 	response = response,covtype="matern3_2")
 
 ###we need to compute some additional arguments:
@@ -86,7 +91,7 @@ batchsize <- 4
 other.points <- c(0.7,0.5,0.5,0.9,0.9,0.8)
 x <- c(0.1,0.2)
 #one evaluation of the vorob_optim_parallel criterion2
-#we calculate the expectation of the future "vorob" uncertainty when 
+#we calculate the expectation of the future "vorob" uncertainty when
 #1+3 points are added to the doe
 #the 1+3 points are (0.1,0.2) and (0.7,0.5), (0.5,0.9), (0.9,0.8)
 vorob_optim_parallel2(x=x,other.points,integration.points=integration.points,

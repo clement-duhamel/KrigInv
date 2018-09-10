@@ -1,5 +1,5 @@
 \name{max_timse_parallel}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{max_timse_parallel}
 
 \title{ Minimizer of the parallel timse criterion}

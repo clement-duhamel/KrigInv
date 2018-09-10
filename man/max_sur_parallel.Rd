@@ -1,5 +1,5 @@
 \name{max_sur_parallel}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{max_sur_parallel}
 
 \title{ Minimizer of the parallel \code{"sur"} or \code{"jn"} criterion}

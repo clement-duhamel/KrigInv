@@ -1,5 +1,5 @@
 \name{sur_optim_parallel2}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{sur_optim_parallel2}
 
 \title{ Parallel sur criterion }

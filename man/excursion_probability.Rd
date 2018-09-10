@@ -1,5 +1,5 @@
 \name{excursion_probability}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{excursion_probability}
 
 \title{Excursion probability with one or many thresholds}

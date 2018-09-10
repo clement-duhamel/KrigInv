@@ -1,5 +1,5 @@
 \name{jn_optim_parallel}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{jn_optim_parallel}
 
 \title{ Parallel jn criterion }

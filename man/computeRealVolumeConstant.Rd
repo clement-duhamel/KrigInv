@@ -1,6 +1,6 @@
 
 \name{computeRealVolumeConstant}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{computeRealVolumeConstant}
 
 \title{A constant used to calculate the expected excursion set's volume variance}

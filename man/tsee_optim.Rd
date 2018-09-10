@@ -1,5 +1,5 @@
 \name{tsee_optim}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{tsee_optim}
 
 \title{ Two Sided Expected Exceedance criterion }

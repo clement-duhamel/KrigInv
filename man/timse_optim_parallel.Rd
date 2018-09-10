@@ -1,5 +1,5 @@
 \name{timse_optim_parallel}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{timse_optim_parallel}
 
 \title{ Parallel targeted IMSE criterion }

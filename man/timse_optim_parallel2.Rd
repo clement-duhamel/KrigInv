@@ -1,5 +1,5 @@
 \name{timse_optim_parallel2}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{timse_optim_parallel2}
 
 \title{ Parallel timse criterion }

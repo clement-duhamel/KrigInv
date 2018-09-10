@@ -1,5 +1,5 @@
 \name{predict_nobias_km}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{predict_nobias_km}
 
 \title{ Kriging predictions}

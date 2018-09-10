@@ -1,7 +1,7 @@
 \name{max_infill_criterion}
 \alias{max_infill_criterion}
 \title{Optimizer for the infill criteria}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 
 \description{
 Optimization, of the chosen infill criterion (maximization or minimization, depending on the case)

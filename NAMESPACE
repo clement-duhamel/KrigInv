@@ -5,6 +5,8 @@ importFrom("randtoolbox", sobol)
 importFrom("grDevices","grey.colors")
 importFrom("graphics","abline","axis","contour","image","lines","mtext","par","plot.new","points")
 importFrom("stats","dnorm","model.matrix","pnorm","qnorm","runif")
+importFrom("anMC","conservativeEstimate")
+importFrom("mvtnorm","pmvnorm")
 
 export(
 bichon_optim,
@@ -17,6 +19,7 @@ integration_design,
 jn_optim_parallel,
 jn_optim_parallel2,
 max_infill_criterion,
+max_futureVol_parallel,
 max_sur_parallel,
 max_timse_parallel,
 max_vorob_parallel,
@@ -36,5 +39,7 @@ tmse_optim,
 tsee_optim,
 vorob_optim_parallel,
 vorob_optim_parallel2,
-vorob_threshold)
+vorob_threshold,
+vorobVol_optim_parallel,
+vorobVol_optim_parallel2)
 

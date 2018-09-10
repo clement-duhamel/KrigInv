@@ -1,22 +1,22 @@
 \name{print_uncertainty_1d}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{print_uncertainty_1d}
 
 \title{
 Prints a measure of uncertainty for 1d function.
 }
 \description{
-This function draws the value of a given measure of uncertainty over the whole input domain (1D). 
+This function draws the value of a given measure of uncertainty over the whole input domain (1D).
 The function can be used to print relevant outputs after having used the function \code{\link{EGI}} or \code{\link{EGIparallel}}.
 }
 \usage{
-print_uncertainty_1d(model, T, type = "pn", 
-lower = 0, upper = 1, resolution = 500, new.points = 0, 
-xscale = c(0, 1), show.points = TRUE, cex.points = 1, 
-cex.axis = 1, pch.points.init = 17, pch.points.end = 17, 
-col.points.init = "black", col.points.end = "red", xaxislab = NULL, 
-yaxislab = NULL, xaxispoint = NULL, yaxispoint = NULL, 
-vorobmean=FALSE,krigmeanplot=FALSE,Tplot=FALSE,...)
+print_uncertainty_1d(model, T, type = "pn",
+lower = 0, upper = 1, resolution = 500, new.points = 0,
+xscale = c(0, 1), show.points = TRUE, cex.points = 1,
+cex.axis = 1, pch.points.init = 17, pch.points.end = 17,
+col.points.init = "black", col.points.end = "red", xaxislab = NULL,
+yaxislab = NULL, xaxispoint = NULL, yaxispoint = NULL,
+vorobmean=FALSE,krigmeanplot=FALSE,Tplot=FALSE,consQuantile=NULL,...)
 }
 
 \arguments{
@@ -27,8 +27,8 @@ Kriging model of \code{\link[DiceKriging]{km}} class.
 Array containing one or several thresholds.
 }
   \item{type}{
-Type of uncertainty that the user wants to print. 
-	Possible values are \code{"pn"} (probability of excursion), or 
+Type of uncertainty that the user wants to print.
+	Possible values are \code{"pn"} (probability of excursion), or
 	\code{"sur"}, \code{"imse"}, \code{"timse"}, \code{"vorob"} if we print a measure of uncertainty corresponding to one criterion.
 }
   \item{lower}{
@@ -41,7 +41,7 @@ Upper bound for the input domain.
 Number of points to discretize the interval (lower,upper).
 }
   \item{new.points}{
-Number of new observations. 
+Number of new observations.
 These observations are the last new.points observations and can be printed in another color and the initial observations (see argument: \code{col.points.end}).
 }
   \item{xscale}{
@@ -89,21 +89,29 @@ When set to \code{TRUE} a kriging mean is plotted on a second y axis.
 \item{Tplot}{
 When set to \code{TRUE}, and if \code{krigmeanplot} is also set to \code{TRUE}, draws horizontal lines corresponding to the different thresholds \code{T}.
 }
+\item{consQuantile}{
+Optional value for plotting conservative quantiles. In order to plot \itemize{
+\item{Conservative estimates: \code{consQuantile} is a list containing at least \code{consLevel} (scalar), with the option \code{typeEx} (character, default = ">").}
+\item{Generic Vorob'ev quantiles: \code{consQuantile} is a scalar corresponding to the Vorob'ev quantile level.}
+}
+}
 \item{...}{
 Additional arguments to the \code{plot} function.
 }
 }
 
 \value{
-The integrated uncertainty
+The integrated uncertainty. If the conservative estimate is computed, it also returns the conservative quantile level.
 }
 
 \references{
 Bect J., Ginsbourger D., Li L., Picheny V., Vazquez E. (2012), \emph{Sequential design of computer experiments for the estimation of a probability of failure}, Statistics and Computing vol. 22(3), pp 773-793
 }
 
-\author{ 
+\author{
 Clement Chevalier (University of Neuchatel, Switzerland)
+
+Dario Azzimonti (IDSIA, Switzerland)
 }
 
 \seealso{\code{\link{print_uncertainty_2d}},\code{\link{print_uncertainty_nd}}}
@@ -124,12 +132,24 @@ response <- testfun(design)
 
 #km object with matern3_2 covariance
 #params estimated by ML from the observations
-model <- km(formula=~., design = design, 
+model <- km(formula=~., design = design,
 	response = response,covtype="matern3_2")
 
-print_uncertainty_1d(model=model,T=T,lower=lower,upper=upper, 
+print_uncertainty_1d(model=model,T=T,lower=lower,upper=upper,
   main="probability of excursion",xlab="x",ylab="pn",
   cex.points=1.5,col.points.init="red",
   krigmeanplot=TRUE,Tplot=TRUE)
+
+\dontrun{
+uq1d <- print_uncertainty_1d(model=model,T=T,lower=lower,upper=upper,
+  main="probability of excursion",xlab="x",ylab="pn",
+  cex.points=1.5,col.points.init="red",
+  krigmeanplot=TRUE,Tplot=TRUE,consQuantile =list(consLevel=0.95))
+
+  print_uncertainty_1d(model=model,T=T,lower=lower,upper=upper,
+  main="probability of excursion",xlab="x",ylab="pn",
+  cex.points=1.5,col.points.init="red",
+  krigmeanplot=TRUE,Tplot=TRUE,consQuantile =uq1d[2])
+}
 
 }
