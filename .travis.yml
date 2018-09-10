@@ -45,7 +45,7 @@ deploy:
   api_key:
     secure: JZzQenI4jc+TNYm464h8p01FTkfAtkV68CHutsZoxPHjhZ6wNVaSiiJrP8ptRP+Us7AS6BawFn2nldBRUkbmMsXTChQ4aI1wLNiKN2cgQNTiukDe2J/kFjGMWSxdfzYOVJ/EJ/8Anl5XiiQGupZYloq+iMIFl6jcY52fpvsp2hsdxiexluqPy0WyfixsxSIENghVTZ9g1tiXW0odZtGNA6Luh1i4zPvUWnGib2mXg7bzYcMh6BatE5D1U06PcmjwQGOvxWMFRQB25WJZz8KUwE6JvevPC18H3o5RUVCygHKWRM8TTkAU/QuLxkszDcyth8yBRIfkHvO3FgMENJBX2t6px42rE2qsmrJDVIriCJYd1rjgxYID6fpIJXxXRXOT3BGmp0wwrmCAcpdLntOn7taCRsmfxV3+yHX/9v0baDcZcjEUgcprt7qVxAl/gS/j+r3ICHeuC9QjX7qAyCFVjOXdx+uTSbczAsKTlUZFD2FWULHVMwXIs/sp0vO5Rf6JHD3chaO4P02ChBq5G9j91+n337J3VIjbuiZjsSY2HQfu3CpLD9FeZAKQxPmoMT0hcimdHTHlbYzHs3+or990IZE9882MSiTNtEtTUSme7G+/x5s2K9/O1bSfibNrfK0Xr9s1AsgX2WyDehBewBfPFdd4S79vI3F3tXYhdT7Z84Y=
   file_glob: true
-  file: DiceKriging*.t*gz
+  file: KrigInv*.t*gz
   skip_cleanup: true
   overwrite: true
   on:
