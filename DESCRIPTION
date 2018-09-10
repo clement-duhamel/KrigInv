@@ -7,7 +7,7 @@ Author: Clement Chevalier, Victor Picheny, David Ginsbourger and Dario Azzimonti
 Maintainer: Clement Chevalier <clement.chevalier@unine.ch>
 Depends: DiceKriging
 Imports: randtoolbox, rgenoud, pbivnorm, anMC, mvtnorm
-Suggests: 
+Suggests: testthat
 Description: Criteria and algorithms for sequentially estimating level sets of a multivariate numerical function, possibly observed with noise.
 URL: https://www.sciencedirect.com/science/article/pii/S0167947313001060, http://www.clementchevalier.com
 License: GPL-3
