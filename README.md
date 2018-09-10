@@ -1,5 +1,5 @@
 Linux & OSX [![Build Status](https://travis-ci.org/KrigInvTeam/KrigInv.png)](https://travis-ci.org/KrigInvTeam/KrigInv)
-Windows [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/KrigInvTeam/KrigInv?branch=master&svg=true)](https://ci.appveyor.com/project/KrigInvTeam/KrigInv)
+Windows [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/DiceKrigingClub/KrigInv?branch=master&svg=true)](https://ci.appveyor.com/project/DiceKrigingClub/KrigInv)
 
 [![codecov](https://codecov.io/gh/KrigInvTeam/KrigInv/branch/master/graph/badge.svg)](https://codecov.io/gh/KrigInvTeam/KrigInv)
 
