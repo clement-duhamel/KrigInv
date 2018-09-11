@@ -1,5 +1,5 @@
 \name{integration_design}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{integration_design}
 
 \title{

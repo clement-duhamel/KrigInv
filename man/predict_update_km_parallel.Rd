@@ -1,5 +1,5 @@
 \name{predict_update_km_parallel}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{predict_update_km_parallel}
 
 \title{

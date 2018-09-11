@@ -13,6 +13,9 @@ max_infill_criterion <- function(lower, upper, optimcontrol=NULL, method, T, mod
 	  funk.optim <- ranjan_optim
 	}
 	
+  if (method=="ranjan" & is.null(method.param)) method.param <- 1
+  if (method=="bichon" & is.null(method.param)) method.param <- 1
+  
 	if(optimcontrol$method == "discrete"){
 		if (is.null(optimcontrol$optim.points)){
 			n.discrete.points<-d*100

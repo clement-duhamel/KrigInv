@@ -1,5 +1,5 @@
 \name{computeQuickKrigcov}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{computeQuickKrigcov}
 
 \title{Quick computation of kriging covariances}

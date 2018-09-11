@@ -1,5 +1,5 @@
 \name{ranjan_optim}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{ranjan_optim}
 
 \title{ Ranjan et al.'s Expected Improvement criterion }

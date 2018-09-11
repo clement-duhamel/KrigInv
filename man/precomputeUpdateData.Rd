@@ -1,5 +1,5 @@
 \name{precomputeUpdateData}
-\Rdversion{1.4}
+\Rdversion{1.4.1}
 \alias{precomputeUpdateData}
 
 \title{Useful precomputations to quickly update kriging mean and variance}
