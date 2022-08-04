@@ -8,4 +8,4 @@
 ^.*\.clang.*
 ^.*\.valgrind.*
 ^.*\.docker.*
-README.md
+^README.md$
