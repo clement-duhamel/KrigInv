@@ -13,11 +13,12 @@ bichon_optim <- function(x, model, T, method.param=1){
 	
 	mk    <- krig$mean; sk    <- krig$sd; alpha <- method.param
 	t <- (mk-T)/sk; tplus <- t + alpha; tminus <- t - alpha
-
-	G <- alpha*(pnorm(tplus)-pnorm(tminus)) - t*(2*pnorm(t) - pnorm(tplus) - pnorm(tminus)) - (2*dnorm(t) - dnorm(tplus) - dnorm(tminus))
-			
-	crit <- G*sk
-
+        if(t==Inf | t==-Inf){
+		crit <- 0
+	}else{
+		G <- alpha*(pnorm(tplus)-pnorm(tminus)) - t*(2*pnorm(t) - pnorm(tplus) - pnorm(tminus)) - (2*dnorm(t) - dnorm(tplus) - dnorm(tminus))	
+		crit <- G*sk
+	}
 	return(crit)
 }
 
