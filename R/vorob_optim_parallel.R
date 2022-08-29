@@ -52,8 +52,8 @@ vorob_optim_parallel <- function(x, integration.points,integration.weights=NULL,
 		arg1 <- as.numeric((intpoints.oldmean-T) / intpoints.oldsd)
     arg2 <- as.numeric((qnorm(alpha) - a)/sqrt(c-1))
     arg3 <- as.numeric(-sqrt(1-1/c))
-    arg1[arg1==Inf] <- 1000 ; arg1[arg1==-Inf] <- -1000 ; arg2[arg2==Inf] <- 1000
-    arg2[arg2==-Inf] <- -1000 ; arg3[arg3==Inf] <- 1000 ; arg3[arg3==-Inf] <- -1000
+    arg1[arg1==Inf] <- 1000 ; arg1[arg1==-Inf] <- -1000 
+    arg2[arg2==Inf] <- 1000 ; arg2[arg2==-Inf] <- -1000
     if(typeEx==">"){
       # pbivnorm - c.d.f of the bivariate gaussian distribution
       term1 <- pbivnorm(arg1,arg2,arg3)  # Type II error
